@@ -1,12 +1,11 @@
 from qiskit import QuantumCircuit, Aer, execute
 import random
 
-
 class QuantumNumberGuessingGame:
     def __init__(self, min_num, max_num):
         self.min_num = min_num
         self.max_num = max_num
-        self.secret_number = random.randint(min_num, max_num)
+        self.secret_number = random.randint(min_num, max_num)  # Generate a random secret number within the given range
         self.num_attempts = 0
 
     def guess_number(self, guess):
@@ -22,19 +21,27 @@ class QuantumNumberGuessingGame:
         print("Welcome to the Quantum Number Guessing Game!")
         print(f"I'm thinking of a number between {self.min_num} and {self.max_num}. Can you guess it?")
         print("You have 10 attempts. Let's begin!")
+        
+        # Set up the backend for simulation
         backend = Aer.get_backend('qasm_simulator')
+        
         for attempt in range(1, 11):
             print(f"Attempt #{attempt}")
             guess = int(input("Enter your guess: "))
+
             # Create a quantum circuit with 1 qubit and 1 classical bit
             qc = QuantumCircuit(1, 1)
+
             # Encode the guess using a quantum gate
-            qc.ry(guess, 0)
+            qc.ry(guess, 0)  # Rotate the qubit by the angle corresponding to the guess
+
             # Measure the qubit
-            qc.measure(0, 0)
+            qc.measure(0, 0)  # Measure the qubit and store the result in the classical bit
+
             # Execute the circuit and get the measurement result
-            job = execute(qc, backend, shots=1)
-            result = list(job.result().get_counts())[0]
+            job = execute(qc, backend, shots=1)  # Execute the circuit on the specified backend
+            result = list(job.result().get_counts())[0]  # Get the measurement result as a string
+
             if result == '0':
                 print("Too low")
             elif result == '1':
@@ -43,14 +50,15 @@ class QuantumNumberGuessingGame:
                 print("Correct!")
                 print(f"The secret number was {self.secret_number}. You guessed it in {attempt} attempts.")
                 break
+
             if attempt == 10:
                 print(f"Game over! The secret number was {self.secret_number}. Better luck next time.")
 
     def start_game(self):
         self.play_game()
 
-
 # Instantiate the game with the desired range of numbers
 game = QuantumNumberGuessingGame(min_num=1, max_num=100)
+
 # Start the game
 game.start_game()
